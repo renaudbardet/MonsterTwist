@@ -10,11 +10,12 @@ public class PlayerController : MonoBehaviour {
 
 	public Rigidbody2D arrow;
 	private Vector3 movementVector;
-	private float movementSpeed = 10;
+	private float movementSpeed = 6;
 
-	public double arrowCooldown = .1;
+	public double arrowCooldown = 1;
 	private double lastArrowShot = 0;
 
+	public bool isMonster = false;
 
 	Orient currentHeading = Orient.Right;
 
@@ -60,33 +61,37 @@ public class PlayerController : MonoBehaviour {
 
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
 
-		//if (canShoot)
-			if (Input.GetButton ("Fire_P" + joystickString) 
-					&& (Time.time - lastArrowShot) > arrowCooldown
-		  		  ) {
-				Debug.Log ("goxbjn");
-				Rigidbody2D a = Instantiate (arrow, playerGraphic.transform.position, transform.rotation) as Rigidbody2D;
+		if (	!isMonster && canShoot
+		    	&& Input.GetButton ("Fire_P" + joystickString) 
+		    	&& ((Time.time - lastArrowShot) > arrowCooldown)
+		    ) {
+			
+			lastArrowShot = Time.time;
+			Debug.Log( lastArrowShot );
 
-				a.GetComponent<Arrow> ().owner = this;
+			Rigidbody2D aRigidBody = Instantiate( arrow, playerGraphic.transform.position, transform.rotation ) as Rigidbody2D;
 
-				switch (currentHeading) {
-				case Orient.Up:
-					a.velocity = new Vector3 (0, -10);
-					break;
-				case Orient.Down:
-					a.velocity = new Vector3 (0, 10);
-					break;
-				case Orient.Left:
-					a.velocity = new Vector3 (-10, 0);
-					break;
-				case Orient.Right:
-					a.velocity = new Vector3 (10, 0);
-					break;
-				}
+			Arrow a = aRigidBody.GetComponent<Arrow>();
+			a.owner = this;
 
-				lastArrowShot = Time.time;
+			Physics2D.IgnoreCollision( a.GetComponent<Collider2D>(), playerGraphic.GetComponent<Collider2D>() );
 
+			switch( currentHeading ){
+			case Orient.Up:
+				aRigidBody.velocity = new Vector3( 0, -a.initialVelocity );
+				break;
+			case Orient.Down:
+				aRigidBody.velocity = new Vector3( 0, a.initialVelocity );
+				break;
+			case Orient.Left:
+				aRigidBody.velocity = new Vector3( -a.initialVelocity, 0 );
+				break;
+			case Orient.Right:
+				aRigidBody.velocity = new Vector3( a.initialVelocity, 0 );
+				break;
 			}
+
+		}
 
 	}
 	
@@ -96,6 +101,32 @@ public class PlayerController : MonoBehaviour {
 			currentHeading = newHeading;
 		}
 
+	}
+
+	public void BecomeMonster( Monstre monster ) {
+
+		// Stoppe le joueur après l'avoir mis à son spawn puis le rend invisible et immatériel
+		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
+		this.playerGraphic.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
+		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = false;
+		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = false;
+		this.canShoot  = false;
+
+		isMonster = true;
+		this.playerGraphic = monster.gameObject;
+		
+	}
+
+	public void RevertToHuman() {
+		
+		isMonster = false;
+		this.playerGraphic = this.defaultPlayerGraphic;
+
+		this.playerGraphic.gameObject.SetActive(true);
+		// le rend visible et matériel
+		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = true;
+		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = true;
+		this.canShoot = true;
 	}
 
 }
