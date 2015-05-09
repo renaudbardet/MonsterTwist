@@ -4,6 +4,7 @@ using System.Collections;
 public class Monstre : MonoBehaviour {
 
 	public PlayerController controller;
+	public int nbCrush = 0;
 	
 	// Use this for initialization
 	void Start () {
@@ -36,4 +37,9 @@ public class Monstre : MonoBehaviour {
 			GameManager.instance.PlayerSlaynMonster (playerHitting);
 	}
 
+	public void Respawn(){
+		this.transform.localPosition = new Vector3 (0, 0, 0);
+		nbCrush = 0;
+	}
+	
 }

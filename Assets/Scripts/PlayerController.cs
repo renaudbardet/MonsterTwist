@@ -90,9 +90,7 @@ public class PlayerController : MonoBehaviour {
 				aRigidBody.velocity = new Vector3( a.initialVelocity, 0 );
 				break;
 			}
-
 		}
-
 	}
 	
 	void setHeading( Orient newHeading ) {
