@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject playerGraphic;
 	public GameObject defaultPlayerGraphic;
 	public int joystickNumber;
+	public bool canShoot = true;
 
 	public Rigidbody2D arrow;
 	private Vector3 movementVector;
@@ -59,32 +60,33 @@ public class PlayerController : MonoBehaviour {
 
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
 
-		if (	Input.GetButton ("Fire_P" + joystickString) 
-		    	&& (Time.time - lastArrowShot) > arrowCooldown
-		    ) {
+		//if (canShoot)
+			if (Input.GetButton ("Fire_P" + joystickString) 
+					&& (Time.time - lastArrowShot) > arrowCooldown
+		  		  ) {
+				Debug.Log ("goxbjn");
+				Rigidbody2D a = Instantiate (arrow, playerGraphic.transform.position, transform.rotation) as Rigidbody2D;
 
-			Rigidbody2D a = Instantiate( arrow, playerGraphic.transform.position, transform.rotation ) as Rigidbody2D;
+				a.GetComponent<Arrow> ().owner = this;
 
-			a.GetComponent<Arrow>().owner = this;
+				switch (currentHeading) {
+				case Orient.Up:
+					a.velocity = new Vector3 (0, -10);
+					break;
+				case Orient.Down:
+					a.velocity = new Vector3 (0, 10);
+					break;
+				case Orient.Left:
+					a.velocity = new Vector3 (-10, 0);
+					break;
+				case Orient.Right:
+					a.velocity = new Vector3 (10, 0);
+					break;
+				}
 
-			switch( currentHeading ){
-			case Orient.Up:
-				a.velocity = new Vector3( 0, -10 );
-				break;
-			case Orient.Down:
-				a.velocity = new Vector3( 0, 10 );
-				break;
-			case Orient.Left:
-				a.velocity = new Vector3( -10, 0 );
-				break;
-			case Orient.Right:
-				a.velocity = new Vector3( 10, 0 );
-				break;
+				lastArrowShot = Time.time;
+
 			}
-
-			lastArrowShot = Time.time;
-
-		}
 
 	}
 	
