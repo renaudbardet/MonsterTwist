@@ -9,4 +9,10 @@ public class PlayerMovement : MonoBehaviour {
 	void Start () {
 	}
 
+	void OnCollisionEnter2D(Collision2D collision) {
+		if (collision.collider.GetComponent<Arrow> () != null)
+			controller.BecomeStun ();
+
+	}
+
 }

@@ -4,7 +4,7 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 
 	public GameObject playerGraphic;
-	public GameObject defaultPlayerGraphic;
+	public PlayerMovement defaultPlayerGraphic;
 	public int joystickNumber;
 	public bool canShoot = true;
 
@@ -12,11 +12,18 @@ public class PlayerController : MonoBehaviour {
 	private Vector3 movementVector;
 	private float movementSpeed = 6;
 
-	public double arrowCooldown = 1;
+	public double arrowCooldown = .5;
 	private double lastArrowShot = 0;
 	
-	public double punchCooldown = 1;
+	public double humanPunchCooldown = .3;
+	public double monsterPunchCooldown = .7;
+	private double GetPunchCooldown() {
+		return isMonster ? monsterPunchCooldown : humanPunchCooldown;
+	}
 	private double lastPunch = 0;
+
+	private double isStunSince = -100;
+	public double stunDelay = 1.5;
 
 	public bool isMonster = false;
 
@@ -24,14 +31,17 @@ public class PlayerController : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {
-		playerGraphic = defaultPlayerGraphic;
+		playerGraphic = defaultPlayerGraphic.gameObject;
 		//movementVector.y = transform.position.y;
 		//characterController = GetComponent<CharacterController>();
-		playerGraphic.GetComponent<PlayerMovement>().controller = this;
+		defaultPlayerGraphic.controller = this;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (Time.time - isStunSince < stunDelay)
+			return;
 
 		string joystickString = joystickNumber.ToString();
 
@@ -64,11 +74,10 @@ public class PlayerController : MonoBehaviour {
 
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
 
-		if (isCloseRange ()) {
+		if (isCloseRange () || isMonster) {
 
-			if (	!isMonster && canShoot
-			    && Input.GetButton ("Fire_P" + joystickString) 
-			    && ((Time.time - lastPunch) > punchCooldown)
+			if (	Input.GetButton ("Fire_P" + joystickString) 
+			    && ((Time.time - lastPunch) > GetPunchCooldown())
 			) {
 
 				hitCloseRange();
@@ -79,8 +88,8 @@ public class PlayerController : MonoBehaviour {
 		else {
 
 			if (	!isMonster && canShoot
-		    		&& Input.GetButton ("Fire_P" + joystickString) 
-		    		&& ((Time.time - lastArrowShot) > arrowCooldown)
+	    		&& Input.GetButton ("Fire_P" + joystickString) 
+	    		&& ((Time.time - lastArrowShot) > arrowCooldown)
 		    	) {
 				
 				shootArrow();
@@ -90,35 +99,42 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void hitCloseRange(){
+		Debug.Log("try hitting smthg");
 
 		lastPunch = Time.time;
 		playerGraphic.GetComponent<Collider2D> ().enabled = false;
 		switch (currentHeading) {
 		case Orient.Up:
-			RaycastHit2D hit = Physics2D.Raycast (playerGraphic.transform.position, Vector2.up, 1);
-			if( hit.collider.GetComponent<Monstre>() != null && hit.distance < 1 )
-				GameManager.instance.PlayerHitMonster( this );
+			CheckHit( Physics2D.Raycast (playerGraphic.transform.position, Vector2.up, 1) );
 			break;
 		case Orient.Down:
-			hit = Physics2D.Raycast (playerGraphic.transform.position, -Vector2.up, 1);
-			if( hit.collider.GetComponent<Monstre>() != null && hit.distance < 1 )
-				GameManager.instance.PlayerHitMonster( this );
+			CheckHit( Physics2D.Raycast (playerGraphic.transform.position, -Vector2.up, 1) );
 			break;
 		case Orient.Left:
-			hit = Physics2D.Raycast (playerGraphic.transform.position, -Vector2.right, 1);
-			if( hit.collider.GetComponent<Monstre>() != null && hit.distance < 1 )
-				GameManager.instance.PlayerHitMonster( this );
+			CheckHit( Physics2D.Raycast (playerGraphic.transform.position, -Vector2.right, 1) );
 			break;
 		case Orient.Right:
-			hit = Physics2D.Raycast (playerGraphic.transform.position, Vector2.right, 1);
-			if( hit.collider.GetComponent<Monstre>() != null && hit.distance < 1 )
-				GameManager.instance.PlayerHitMonster( this );
+			CheckHit( Physics2D.Raycast (playerGraphic.transform.position, Vector2.right, 1) );
 			break;
 		}
 		playerGraphic.GetComponent<Collider2D> ().enabled = true;
 
 	}
-
+	void CheckHit(RaycastHit2D hit) {
+		if (hit.collider == null) return;
+		Debug.Log("hitting smthg");
+		if (hit.collider.GetComponent<Monstre> () != null)
+			GameManager.instance.PlayerHitMonster (this);
+		else if (isMonster) {
+			if (hit.collider.GetComponent<PlayerMovement> () != null) {
+				Debug.Log("hitting someone");
+				hit.collider.GetComponent<PlayerMovement> ().controller.TakeDamage ();
+			} else if (hit.collider.GetComponent<Arrow> () != null) {
+				Destroy (hit.collider.gameObject);
+			}
+		}
+	}
+		
 	void shootArrow() {
 
 		lastArrowShot = Time.time;
@@ -175,13 +191,22 @@ public class PlayerController : MonoBehaviour {
 	public void RevertToHuman() {
 		
 		isMonster = false;
-		this.playerGraphic = this.defaultPlayerGraphic;
+		this.playerGraphic = this.defaultPlayerGraphic.gameObject;
 
 		this.playerGraphic.gameObject.SetActive(true);
 		// le rend visible et matériel
 		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = true;
 		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = true;
 		this.canShoot = true;
+
+	}
+
+	public void Respawn() {
+
+		RevertToHuman ();
+
+		playerGraphic.transform.position = defaultPlayerGraphic.spawn.transform.position;
+
 	}
 
 	public bool isCloseRange() {
@@ -216,5 +241,16 @@ public class PlayerController : MonoBehaviour {
 
 	}
 
+	public void TakeDamage() {
+		if (!isMonster) {
+			Respawn();
+		}
+	}
+
+	public void BecomeStun() {
+		if (!isMonster) {
+			isStunSince = Time.time;
+		}
+	}
 
 }

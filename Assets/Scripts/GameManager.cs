@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject batiment3;
 	public GameObject batiment4;
 
-	public GameObject monstre;
+	public Monstre monstre;
 	private PlayerController oldPlayer;
 
 	// Use this for initialization
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour {
 	public void PlayerSlaynMonster( PlayerController player ){
 
 		// "Résurection" de l'ancien joueur monstre
-		PlayerController oldPlayer = monstre.GetComponent<PlayerMovement>().controller;
+		PlayerController oldPlayer = monstre.GetComponent<Monstre>().controller;
 		Debug.Log ("oldPlayer = " + oldPlayer);
 		if (oldPlayer) {
 			oldPlayer.RevertToHuman();
@@ -60,8 +60,9 @@ public class GameManager : MonoBehaviour {
 	public void PlayerBecomeMonster( PlayerController player ){
 
 		// Change le role du monstre
-		player.BecomeMonster( monstre.GetComponent<Monstre>() );
-		monstre.GetComponent<PlayerMovement> ().controller = player;
+		player.BecomeMonster( monstre );
+		monstre.controller = player;
+
 	}
 
 	public void MonsterWin(){

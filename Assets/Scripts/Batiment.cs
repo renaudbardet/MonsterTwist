@@ -19,7 +19,7 @@ public class Batiment : MonoBehaviour {
 			// Entre en contacte avec le monstre
 			Debug.Log ("Batiment hit by Monster");
 
-			if (collision.gameObject.GetComponent<PlayerMovement> ().controller != player){
+			if (collision.gameObject.GetComponent<Monstre> ().controller != player){
 				collision.gameObject.GetComponent<Monstre>().nbCrush ++;
 				this.GetComponent<BoxCollider2D> ().enabled  = false;
 				this.GetComponent<SpriteRenderer> ().enabled  = false;

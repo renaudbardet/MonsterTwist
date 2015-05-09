@@ -49,6 +49,7 @@ public class Monstre : MonoBehaviour {
 
 	public void Respawn(){
 		this.transform.localPosition = new Vector3 (0, 0, 0);
+		life = maxLife;
 		nbCrush = 0;
 	}
 
