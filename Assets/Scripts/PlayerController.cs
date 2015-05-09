@@ -26,12 +26,7 @@ public class PlayerController : MonoBehaviour {
 		movementVector.y = - Input.GetAxis("Vertical_P" + joystickString) * movementSpeed;
 
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
-		// rigid remplacer par cible methode target_input
 
-		//GetComponent<Rigidbody2D>().AddForce(movementVector);
-
-		//transform.position = movementVector;
-		//characterController.Move(movementVector * Time.deltaTime);
 	}
 
 }
