@@ -4,10 +4,13 @@ using System.Collections;
 public class Monstre : MonoBehaviour {
 
 	public PlayerController controller;
+
+	public int maxLife = 5;
+	public int life;
 	
 	// Use this for initialization
 	void Start () {
-	
+		life = maxLife;
 	}
 	
 	// Update is called once per frame
@@ -20,12 +23,10 @@ public class Monstre : MonoBehaviour {
 		PlayerController playerHitting = null;
 
 		if (collision.gameObject.GetComponent<PlayerMovement> () != null) {
-			Debug.Log ("monster hit by player");
 			playerHitting = collision.gameObject.GetComponent<PlayerMovement> ().controller;
 		}
 		
 		if (collision.gameObject.GetComponent<Arrow> () != null) {
-			Debug.Log("monster hit by arrow");
 			playerHitting = collision.gameObject.GetComponent<Arrow> ().owner;
 			Debug.Log(playerHitting);
 		}
@@ -33,7 +34,8 @@ public class Monstre : MonoBehaviour {
 		Debug.Log(playerHitting);
 
 		if (playerHitting != null)
-			GameManager.instance.PlayerSlaynMonster (playerHitting);
+			GameManager.instance.PlayerHitMonster (playerHitting);
+
 	}
 
 }

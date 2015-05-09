@@ -5,13 +5,7 @@ public class GameManager : MonoBehaviour {
 
 	public static GameManager instance;
 
-	public GameObject joueur1;
-	public GameObject joueur2;
-	public GameObject joueur3;
-	public GameObject joueur4;
-
-	public GameObject monstre;
-	private PlayerController oldPlayer;
+	public Monstre monstre;
 
 	// Use this for initialization
 	void Start () {
@@ -23,10 +17,21 @@ public class GameManager : MonoBehaviour {
 
 	}
 
+	public void PlayerHitMonster( PlayerController player ){
+
+		Debug.Log ("player " + player + " hit the monster");
+
+		--monstre.life;
+		Debug.Log ("monster life " + monstre.life);
+		if (monstre.life <= 0)
+			PlayerSlaynMonster (player);
+
+	}
+
 	public void PlayerSlaynMonster( PlayerController player ){
 
 		// "Résurection" de l'ancien joueur monstre
-		oldPlayer = monstre.GetComponent<PlayerMovement>().controller;
+		PlayerController oldPlayer = monstre.GetComponent<PlayerMovement>().controller;
 		Debug.Log ("oldPlayer = " + oldPlayer);
 		if (oldPlayer) {
 			oldPlayer.RevertToHuman();
@@ -37,10 +42,7 @@ public class GameManager : MonoBehaviour {
 		// Change le role du monstre
 		player.BecomeMonster( monstre.GetComponent<Monstre>() );
 		monstre.GetComponent<PlayerMovement> ().controller = player;
-
-	}
-
-	void BeMonster(PlayerController oldPlayer){
+		monstre.life = monstre.maxLife;
 
 	}
 
