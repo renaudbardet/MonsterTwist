@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Monstre : MonoBehaviour {
 
+	public PlayerController controller;
+	
 	// Use this for initialization
 	void Start () {
 	
@@ -15,7 +17,7 @@ public class Monstre : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D collision) {
 		
-			Debug.Log (collision.gameObject.name );
+		GameManager.instance.PlayerSlaynMonster (collision.gameObject.GetComponent<PlayerMovement>().controller);
 		
 	}
 
