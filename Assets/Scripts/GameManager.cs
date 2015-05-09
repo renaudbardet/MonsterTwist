@@ -24,11 +24,12 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void PlayerSlaynMonster( PlayerController player ){
+
 		// "Résurection" de l'ancien joueur monstre
 		oldPlayer = monstre.GetComponent<PlayerMovement>().controller;
 		Debug.Log ("oldPlayer = " + oldPlayer);
 		if (oldPlayer) {
-			oldPlayer.playerGraphic = oldPlayer.defaultPlayerGraphic;
+			oldPlayer.RevertToHuman();
 		}
 
 		// Stoppe le joueur après l'avoir mis à son spawn
@@ -36,9 +37,11 @@ public class GameManager : MonoBehaviour {
 		player.playerGraphic.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
 
 		Debug.Log ("slayn by " + player);
+
 		// Change le role du monstre
-		player.playerGraphic = monstre;
+		player.BecomeMonster( monstre.GetComponent<Monstre>() );
 		monstre.GetComponent<PlayerMovement> ().controller = player;
+
 	}
 
 }

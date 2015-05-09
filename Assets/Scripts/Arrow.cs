@@ -4,6 +4,7 @@ using System.Collections;
 public class Arrow : MonoBehaviour {
 
 	public PlayerController owner;
+	public float initialVelocity;
 
 	// Use this for initialization
 	void Start () {
@@ -17,9 +18,9 @@ public class Arrow : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D collision) {
 
-		PlayerMovement playerHit = collision.gameObject.GetComponent<PlayerMovement> ();
-		if (playerHit != null && playerHit.controller == owner)
-			return;
+//		PlayerMovement playerHit = collision.collider.GetComponent<PlayerMovement> ();
+//		if (playerHit != null && playerHit.controller == owner)
+//			return;
 
 		Destroy (gameObject);
 		

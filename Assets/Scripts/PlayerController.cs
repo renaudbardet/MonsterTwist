@@ -9,11 +9,12 @@ public class PlayerController : MonoBehaviour {
 
 	public Rigidbody2D arrow;
 	private Vector3 movementVector;
-	private float movementSpeed = 10;
+	private float movementSpeed = 6;
 
-	public double arrowCooldown = .1;
+	public double arrowCooldown = 1;
 	private double lastArrowShot = 0;
 
+	public bool isMonster = false;
 
 	Orient currentHeading = Orient.Right;
 
@@ -59,30 +60,35 @@ public class PlayerController : MonoBehaviour {
 
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
 
-		if (	Input.GetButton ("Fire_P" + joystickString) 
-		    	&& (Time.time - lastArrowShot) > arrowCooldown
+		if (	!isMonster
+		    	&& Input.GetButton ("Fire_P" + joystickString) 
+		    	&& ((Time.time - lastArrowShot) > arrowCooldown)
 		    ) {
+			
+			lastArrowShot = Time.time;
+			Debug.Log( lastArrowShot );
 
-			Rigidbody2D a = Instantiate( arrow, playerGraphic.transform.position, transform.rotation ) as Rigidbody2D;
+			Rigidbody2D aRigidBody = Instantiate( arrow, playerGraphic.transform.position, transform.rotation ) as Rigidbody2D;
 
-			a.GetComponent<Arrow>().owner = this;
+			Arrow a = aRigidBody.GetComponent<Arrow>();
+			a.owner = this;
+
+			Physics2D.IgnoreCollision( a.GetComponent<Collider2D>(), playerGraphic.GetComponent<Collider2D>() );
 
 			switch( currentHeading ){
 			case Orient.Up:
-				a.velocity = new Vector3( 0, -10 );
+				aRigidBody.velocity = new Vector3( 0, -a.initialVelocity );
 				break;
 			case Orient.Down:
-				a.velocity = new Vector3( 0, 10 );
+				aRigidBody.velocity = new Vector3( 0, a.initialVelocity );
 				break;
 			case Orient.Left:
-				a.velocity = new Vector3( -10, 0 );
+				aRigidBody.velocity = new Vector3( -a.initialVelocity, 0 );
 				break;
 			case Orient.Right:
-				a.velocity = new Vector3( 10, 0 );
+				aRigidBody.velocity = new Vector3( a.initialVelocity, 0 );
 				break;
 			}
-
-			lastArrowShot = Time.time;
 
 		}
 
@@ -94,6 +100,20 @@ public class PlayerController : MonoBehaviour {
 			currentHeading = newHeading;
 		}
 
+	}
+
+	public void BecomeMonster( Monstre monster ) {
+
+		isMonster = true;
+		this.playerGraphic = monster.gameObject;
+		
+	}
+
+	public void RevertToHuman() {
+		
+		isMonster = false;
+		this.playerGraphic = this.defaultPlayerGraphic;
+		
 	}
 
 }
