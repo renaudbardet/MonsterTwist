@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour {
 
 	public Rigidbody2D arrow;
 	private Vector3 movementVector;
-	public float movementSpeed = 12;
+	private float movementSpeed = 6;
 
 	public double arrowCooldown = .5;
 	private double lastArrowShot = 0;
@@ -105,16 +105,16 @@ public class PlayerController : MonoBehaviour {
 		playerGraphic.GetComponent<Collider2D> ().enabled = false;
 		switch (currentHeading) {
 		case Orient.Up:
-			CheckHit( Physics2D.Raycast (playerGraphic.transform.position, Vector2.up, 1) );
+			CheckHit( Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.up, 1) );
 			break;
 		case Orient.Down:
-			CheckHit( Physics2D.Raycast (playerGraphic.transform.position, -Vector2.up, 1) );
+			CheckHit( Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, -Vector2.up, 1) );
 			break;
 		case Orient.Left:
-			CheckHit( Physics2D.Raycast (playerGraphic.transform.position, -Vector2.right, 1) );
+			CheckHit( Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, -Vector2.right, 1) );
 			break;
 		case Orient.Right:
-			CheckHit( Physics2D.Raycast (playerGraphic.transform.position, Vector2.right, 1) );
+			CheckHit( Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.right, 1) );
 			break;
 		}
 		playerGraphic.GetComponent<Collider2D> ().enabled = true;
@@ -129,6 +129,7 @@ public class PlayerController : MonoBehaviour {
 			if (hit.collider.GetComponent<PlayerMovement> () != null) {
 				Debug.Log("hitting someone");
 				hit.collider.GetComponent<PlayerMovement> ().controller.TakeDamage ();
+				++playerGraphic.GetComponent<Monstre>().life;
 			} else if (hit.collider.GetComponent<Arrow> () != null) {
 				Destroy (hit.collider.gameObject);
 			}
@@ -154,12 +155,13 @@ public class PlayerController : MonoBehaviour {
 		case Orient.Down:
 			aRigidBody.velocity = new Vector3 (0, -a.initialVelocity*2);
 			aRigidBody.rotation = 90;
+
 			break;
 		case Orient.Left:
-			aRigidBody.velocity = new Vector3 (-a.initialVelocity*2, 0);
+			aRigidBody.velocity = new Vector3 (-a.initialVelocity, 0);
 			break;
 		case Orient.Right:
-			aRigidBody.velocity = new Vector3 (a.initialVelocity*2, 0);
+			aRigidBody.velocity = new Vector3 (a.initialVelocity, 0);
 			break;
 		}
 
@@ -177,7 +179,7 @@ public class PlayerController : MonoBehaviour {
 
 		monster.nbCrush = 0;
 		monster.life = monster.maxLife;
-		
+
 		// Stoppe le joueur après l'avoir mis à son spawn puis le rend invisible et immatériel
 		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
 		this.playerGraphic.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
@@ -191,12 +193,11 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void RevertToHuman() {
-
+		
 		isMonster = false;
 		this.playerGraphic = this.defaultPlayerGraphic.gameObject;
 
 		this.playerGraphic.gameObject.SetActive(true);
-		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
 		// le rend visible et matériel
 		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = true;
 		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = true;
@@ -218,22 +219,22 @@ public class PlayerController : MonoBehaviour {
 		playerGraphic.GetComponent<Collider2D> ().enabled = false;
 		switch (currentHeading) {
 		case Orient.Up:
-			RaycastHit2D hit = Physics2D.Raycast (playerGraphic.transform.position, Vector2.up, 1);
+			RaycastHit2D hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.up, 1);
 			if( hit.collider != null && hit.distance < 1 )
 				ret = true;
 			break;
 		case Orient.Down:
-			hit = Physics2D.Raycast (playerGraphic.transform.position, -Vector2.up, 1);
+			hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, -Vector2.up, 1);
 			if( hit.collider != null && hit.distance < 1 )
 				ret = true;
 			break;
 		case Orient.Left:
-			hit = Physics2D.Raycast (playerGraphic.transform.position, -Vector2.right, 1);
+			hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, -Vector2.right, 1);
 			if( hit.collider != null && hit.distance < 1 )
 				ret = true;
 			break;
 		case Orient.Right:
-			hit = Physics2D.Raycast (playerGraphic.transform.position, Vector2.right, 1);
+			hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.right, 1);
 			if( hit.collider != null && hit.distance < 1 )
 				ret = true;
 			break;
