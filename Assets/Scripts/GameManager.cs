@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject batiment3;
 	public GameObject batiment4;
 
-	public GameObject monstre;
+	public Monstre monstre;
 	private PlayerController oldPlayer;
 
 	// Use this for initialization

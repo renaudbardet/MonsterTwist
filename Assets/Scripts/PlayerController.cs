@@ -159,7 +159,7 @@ public class PlayerController : MonoBehaviour {
 
 		monster.nbCrush = 0;
 		monster.life = monster.maxLife;
-
+		
 		// Stoppe le joueur après l'avoir mis à son spawn puis le rend invisible et immatériel
 		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
 		this.playerGraphic.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
@@ -173,11 +173,12 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void RevertToHuman() {
-		
+
 		isMonster = false;
 		this.playerGraphic = this.defaultPlayerGraphic;
 
 		this.playerGraphic.gameObject.SetActive(true);
+		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
 		// le rend visible et matériel
 		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = true;
 		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = true;
