@@ -149,9 +149,11 @@ public class PlayerController : MonoBehaviour {
 		switch (currentHeading) {
 		case Orient.Up:
 			aRigidBody.velocity = new Vector3 (0, a.initialVelocity*2);
+			aRigidBody.rotation = 90;
 			break;
 		case Orient.Down:
 			aRigidBody.velocity = new Vector3 (0, -a.initialVelocity*2);
+			aRigidBody.rotation = 90;
 			break;
 		case Orient.Left:
 			aRigidBody.velocity = new Vector3 (-a.initialVelocity*2, 0);
