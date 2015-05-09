@@ -16,9 +16,9 @@ public class Monstre : MonoBehaviour {
 	}
 
 	void OnCollisionEnter2D(Collision2D collision) {
-		
-		GameManager.instance.PlayerSlaynMonster (collision.gameObject.GetComponent<PlayerMovement>().controller);
-		
+		if (collision.gameObject.GetComponent<PlayerMovement>().controller){
+			GameManager.instance.PlayerSlaynMonster (collision.gameObject.GetComponent<PlayerMovement>().controller);
+		}
 	}
 
 }

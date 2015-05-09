@@ -4,14 +4,17 @@ using System.Collections;
 public class PlayerController : MonoBehaviour {
 
 	public GameObject playerGraphic;
+	public GameObject defaultPlayerGraphic;
+	public int joystickNumber;
+	
 	private Vector3 movementVector;
 	//private CharacterController characterController;
 	private float movementSpeed = 10;
 
-	public int joystickNumber;
 
 	// Use this for initialization
 	void Start () {
+		playerGraphic = defaultPlayerGraphic;
 		//movementVector.y = transform.position.y;
 		//characterController = GetComponent<CharacterController>();
 	}
