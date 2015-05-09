@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour {
 
 	public Rigidbody2D arrow;
 	private Vector3 movementVector;
-	private float movementSpeed = 6;
+	public float movementSpeed = 12;
 
 	public double arrowCooldown = .5;
 	private double lastArrowShot = 0;
@@ -148,16 +148,16 @@ public class PlayerController : MonoBehaviour {
 		
 		switch (currentHeading) {
 		case Orient.Up:
-			aRigidBody.velocity = new Vector3 (0, a.initialVelocity);
+			aRigidBody.velocity = new Vector3 (0, a.initialVelocity*2);
 			break;
 		case Orient.Down:
-			aRigidBody.velocity = new Vector3 (0, -a.initialVelocity);
+			aRigidBody.velocity = new Vector3 (0, -a.initialVelocity*2);
 			break;
 		case Orient.Left:
-			aRigidBody.velocity = new Vector3 (-a.initialVelocity, 0);
+			aRigidBody.velocity = new Vector3 (-a.initialVelocity*2, 0);
 			break;
 		case Orient.Right:
-			aRigidBody.velocity = new Vector3 (a.initialVelocity, 0);
+			aRigidBody.velocity = new Vector3 (a.initialVelocity*2, 0);
 			break;
 		}
 
@@ -175,7 +175,7 @@ public class PlayerController : MonoBehaviour {
 
 		monster.nbCrush = 0;
 		monster.life = monster.maxLife;
-
+		
 		// Stoppe le joueur après l'avoir mis à son spawn puis le rend invisible et immatériel
 		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
 		this.playerGraphic.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
@@ -189,11 +189,12 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void RevertToHuman() {
-		
+
 		isMonster = false;
 		this.playerGraphic = this.defaultPlayerGraphic.gameObject;
 
 		this.playerGraphic.gameObject.SetActive(true);
+		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
 		// le rend visible et matériel
 		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = true;
 		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = true;
