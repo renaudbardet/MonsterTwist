@@ -86,9 +86,7 @@ public class PlayerController : MonoBehaviour {
 				shootArrow();
 
 			}
-
 		}
-
 	}
 
 	void hitCloseRange(){
@@ -158,6 +156,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void BecomeMonster( Monstre monster ) {
+
+		monster.nbCrush = 0;
+		monster.life = monster.maxLife;
 
 		// Stoppe le joueur après l'avoir mis à son spawn puis le rend invisible et immatériel
 		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
