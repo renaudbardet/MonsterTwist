@@ -6,7 +6,17 @@ public class Monstre : MonoBehaviour {
 	public PlayerController controller;
 
 	public int maxLife = 5;
-	public int life;
+	
+	public GameObject lifeBar;
+	private int _life;
+	public int life {
+		get { return _life; }
+		set { 
+			_life = Mathf.Max(0, value);
+			float lifeBarScale = (float)_life/(float)maxLife;
+			lifeBar.transform.localScale = new Vector3( lifeBarScale, 1, 1 );
+		}
+	}
 	
 	// Use this for initialization
 	void Start () {
