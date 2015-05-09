@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour {
 
 	public Rigidbody2D arrow;
 	private Vector3 movementVector;
-	private float movementSpeed = 6;
+	public float movementSpeed = 12;
 
 	public double arrowCooldown = 1;
 	private double lastArrowShot = 0;
@@ -132,16 +132,16 @@ public class PlayerController : MonoBehaviour {
 		
 		switch (currentHeading) {
 		case Orient.Up:
-			aRigidBody.velocity = new Vector3 (0, a.initialVelocity);
+			aRigidBody.velocity = new Vector3 (0, a.initialVelocity*2);
 			break;
 		case Orient.Down:
-			aRigidBody.velocity = new Vector3 (0, -a.initialVelocity);
+			aRigidBody.velocity = new Vector3 (0, -a.initialVelocity*2);
 			break;
 		case Orient.Left:
-			aRigidBody.velocity = new Vector3 (-a.initialVelocity, 0);
+			aRigidBody.velocity = new Vector3 (-a.initialVelocity*2, 0);
 			break;
 		case Orient.Right:
-			aRigidBody.velocity = new Vector3 (a.initialVelocity, 0);
+			aRigidBody.velocity = new Vector3 (a.initialVelocity*2, 0);
 			break;
 		}
 
