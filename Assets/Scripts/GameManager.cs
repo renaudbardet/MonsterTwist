@@ -39,6 +39,10 @@ public class GameManager : MonoBehaviour {
 		
 		Debug.Log ("slayn by " + player);
 
+	}
+
+	public void PlayerBecomeMonster( PlayerController player ){
+
 		// Change le role du monstre
 		player.BecomeMonster( monstre.GetComponent<Monstre>() );
 		monstre.GetComponent<PlayerMovement> ().controller = player;

@@ -14,6 +14,9 @@ public class PlayerController : MonoBehaviour {
 
 	public double arrowCooldown = 1;
 	private double lastArrowShot = 0;
+	
+	public double punchCooldown = 1;
+	private double lastPunch = 0;
 
 	public bool isMonster = false;
 
@@ -52,49 +55,100 @@ public class PlayerController : MonoBehaviour {
 		} else {
 
 			if (yAxis < 0) {
-				setHeading (Orient.Up);
-			} else if (yAxis > 0) {
 				setHeading (Orient.Down);
+			} else if (yAxis > 0) {
+				setHeading (Orient.Up);
 			}
 
 		}
 
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
 
-		if (	!isMonster && canShoot
-		    	&& Input.GetButton ("Fire_P" + joystickString) 
-		    	&& ((Time.time - lastArrowShot) > arrowCooldown)
-		    ) {
+		if (isCloseRange ()) {
+
+			if (	!isMonster && canShoot
+			    && Input.GetButton ("Fire_P" + joystickString) 
+			    && ((Time.time - lastPunch) > punchCooldown)
+			) {
+
+				hitCloseRange();
+
+			}
 			
-			lastArrowShot = Time.time;
-			Debug.Log( lastArrowShot );
+		}
+		else {
 
-			Rigidbody2D aRigidBody = Instantiate( arrow, playerGraphic.transform.position, transform.rotation ) as Rigidbody2D;
+			if (	!isMonster && canShoot
+		    		&& Input.GetButton ("Fire_P" + joystickString) 
+		    		&& ((Time.time - lastArrowShot) > arrowCooldown)
+		    	) {
+				
+				shootArrow();
 
-			Arrow a = aRigidBody.GetComponent<Arrow>();
-			a.owner = this;
-
-			Physics2D.IgnoreCollision( a.GetComponent<Collider2D>(), playerGraphic.GetComponent<Collider2D>() );
-
-			switch( currentHeading ){
-			case Orient.Up:
-				aRigidBody.velocity = new Vector3( 0, -a.initialVelocity );
-				break;
-			case Orient.Down:
-				aRigidBody.velocity = new Vector3( 0, a.initialVelocity );
-				break;
-			case Orient.Left:
-				aRigidBody.velocity = new Vector3( -a.initialVelocity, 0 );
-				break;
-			case Orient.Right:
-				aRigidBody.velocity = new Vector3( a.initialVelocity, 0 );
-				break;
 			}
 
 		}
 
 	}
-	
+
+	void hitCloseRange(){
+
+		lastPunch = Time.time;
+		playerGraphic.GetComponent<Collider2D> ().enabled = false;
+		switch (currentHeading) {
+		case Orient.Up:
+			RaycastHit2D hit = Physics2D.Raycast (playerGraphic.transform.position, Vector2.up, 1);
+			if( hit.collider.GetComponent<Monstre>() != null && hit.distance < 1 )
+				GameManager.instance.PlayerHitMonster( this );
+			break;
+		case Orient.Down:
+			hit = Physics2D.Raycast (playerGraphic.transform.position, -Vector2.up, 1);
+			if( hit.collider.GetComponent<Monstre>() != null && hit.distance < 1 )
+				GameManager.instance.PlayerHitMonster( this );
+			break;
+		case Orient.Left:
+			hit = Physics2D.Raycast (playerGraphic.transform.position, -Vector2.right, 1);
+			if( hit.collider.GetComponent<Monstre>() != null && hit.distance < 1 )
+				GameManager.instance.PlayerHitMonster( this );
+			break;
+		case Orient.Right:
+			hit = Physics2D.Raycast (playerGraphic.transform.position, Vector2.right, 1);
+			if( hit.collider.GetComponent<Monstre>() != null && hit.distance < 1 )
+				GameManager.instance.PlayerHitMonster( this );
+			break;
+		}
+		playerGraphic.GetComponent<Collider2D> ().enabled = true;
+
+	}
+
+	void shootArrow() {
+
+		lastArrowShot = Time.time;
+		
+		Rigidbody2D aRigidBody = Instantiate (arrow, playerGraphic.transform.position, transform.rotation) as Rigidbody2D;
+		
+		Arrow a = aRigidBody.GetComponent<Arrow> ();
+		a.owner = this;
+		
+		Physics2D.IgnoreCollision (a.GetComponent<Collider2D> (), playerGraphic.GetComponent<Collider2D> ());
+		
+		switch (currentHeading) {
+		case Orient.Up:
+			aRigidBody.velocity = new Vector3 (0, a.initialVelocity);
+			break;
+		case Orient.Down:
+			aRigidBody.velocity = new Vector3 (0, -a.initialVelocity);
+			break;
+		case Orient.Left:
+			aRigidBody.velocity = new Vector3 (-a.initialVelocity, 0);
+			break;
+		case Orient.Right:
+			aRigidBody.velocity = new Vector3 (a.initialVelocity, 0);
+			break;
+		}
+
+	}
+
 	void setHeading( Orient newHeading ) {
 
 		if (newHeading != currentHeading) {
@@ -128,5 +182,38 @@ public class PlayerController : MonoBehaviour {
 		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = true;
 		this.canShoot = true;
 	}
+
+	public bool isCloseRange() {
+
+		bool ret = false;
+		playerGraphic.GetComponent<Collider2D> ().enabled = false;
+		switch (currentHeading) {
+		case Orient.Up:
+			RaycastHit2D hit = Physics2D.Raycast (playerGraphic.transform.position, Vector2.up, 1);
+			if( hit.collider != null && hit.distance < 1 )
+				ret = true;
+			break;
+		case Orient.Down:
+			hit = Physics2D.Raycast (playerGraphic.transform.position, -Vector2.up, 1);
+			if( hit.collider != null && hit.distance < 1 )
+				ret = true;
+			break;
+		case Orient.Left:
+			hit = Physics2D.Raycast (playerGraphic.transform.position, -Vector2.right, 1);
+			if( hit.collider != null && hit.distance < 1 )
+				ret = true;
+			break;
+		case Orient.Right:
+			hit = Physics2D.Raycast (playerGraphic.transform.position, Vector2.right, 1);
+			if( hit.collider != null && hit.distance < 1 )
+				ret = true;
+			break;
+		}
+		playerGraphic.GetComponent<Collider2D> ().enabled = true;
+
+		return ret;
+
+	}
+
 
 }

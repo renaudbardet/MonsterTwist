@@ -13,8 +13,10 @@ public class Monstre : MonoBehaviour {
 		get { return _life; }
 		set { 
 			_life = Mathf.Max(0, value);
-			float lifeBarScale = (float)_life/(float)maxLife;
+			float lifeBarScale = Mathf.Max((float)_life/(float)maxLife, .1f);
+			Debug.Log( lifeBarScale );
 			lifeBar.transform.localScale = new Vector3( lifeBarScale, 1, 1 );
+			lifeBar.transform.localPosition = new Vector3(0,0,0);
 		}
 	}
 	
@@ -30,18 +32,14 @@ public class Monstre : MonoBehaviour {
 
 	void OnCollisionEnter2D(Collision2D collision) {
 
-		PlayerController playerHitting = null;
-
-		if (collision.gameObject.GetComponent<PlayerMovement> () != null) {
-			playerHitting = collision.gameObject.GetComponent<PlayerMovement> ().controller;
+		if (collision.gameObject.GetComponent<PlayerMovement> () != null && _life == 0) {
+			GameManager.instance.PlayerBecomeMonster( collision.gameObject.GetComponent<PlayerMovement> ().controller );
 		}
-		
+
+		PlayerController playerHitting = null;
 		if (collision.gameObject.GetComponent<Arrow> () != null) {
 			playerHitting = collision.gameObject.GetComponent<Arrow> ().owner;
-			Debug.Log(playerHitting);
 		}
-
-		Debug.Log(playerHitting);
 
 		if (playerHitting != null)
 			GameManager.instance.PlayerHitMonster (playerHitting);
