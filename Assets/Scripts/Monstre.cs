@@ -14,7 +14,7 @@ public class Monstre : MonoBehaviour {
 	public int life {
 		get { return _life; }
 		set { 
-			_life = Mathf.Max(0, value);
+			_life = Mathf.Min( Mathf.Max(0, value), maxLife);
 			float lifeBarScale = (float)_life/(float)maxLife;
 			lifeBar.transform.localScale = new Vector3( lifeBarScale, 1, 1 );
 			lifeBar.transform.localPosition = new Vector3(0,0,0);
