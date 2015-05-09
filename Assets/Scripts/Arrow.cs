@@ -5,6 +5,7 @@ public class Arrow : MonoBehaviour {
 
 	public PlayerController owner;
 	public float initialVelocity;
+	public bool explosive;
 
 	// Use this for initialization
 	void Start () {
