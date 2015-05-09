@@ -15,7 +15,7 @@ public class GameManager : MonoBehaviour {
 	public GameObject batiment3;
 	public GameObject batiment4;
 
-	public Monstre monstre;
+	public GameObject monstre;
 	private PlayerController oldPlayer;
 
 	// Use this for initialization
@@ -62,7 +62,6 @@ public class GameManager : MonoBehaviour {
 		// Change le role du monstre
 		player.BecomeMonster( monstre.GetComponent<Monstre>() );
 		monstre.GetComponent<PlayerMovement> ().controller = player;
-
 	}
 
 	public void MonsterWin(){

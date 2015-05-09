@@ -51,5 +51,5 @@ public class Monstre : MonoBehaviour {
 		this.transform.localPosition = new Vector3 (0, 0, 0);
 		nbCrush = 0;
 	}
-	
+
 }
