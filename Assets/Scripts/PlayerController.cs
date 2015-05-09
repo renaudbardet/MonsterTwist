@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour {
 	public GameObject playerGraphic;
 	public GameObject defaultPlayerGraphic;
 	public int joystickNumber;
+	public bool canShoot = true;
 
 	public Rigidbody2D arrow;
 	private Vector3 movementVector;
@@ -60,7 +61,7 @@ public class PlayerController : MonoBehaviour {
 
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
 
-		if (	!isMonster
+		if (	!isMonster && canShoot
 		    	&& Input.GetButton ("Fire_P" + joystickString) 
 		    	&& ((Time.time - lastArrowShot) > arrowCooldown)
 		    ) {
@@ -104,6 +105,13 @@ public class PlayerController : MonoBehaviour {
 
 	public void BecomeMonster( Monstre monster ) {
 
+		// Stoppe le joueur après l'avoir mis à son spawn puis le rend invisible et immatériel
+		this.playerGraphic.transform.position = playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
+		this.playerGraphic.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
+		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = false;
+		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = false;
+		this.canShoot  = false;
+
 		isMonster = true;
 		this.playerGraphic = monster.gameObject;
 		
@@ -113,7 +121,12 @@ public class PlayerController : MonoBehaviour {
 		
 		isMonster = false;
 		this.playerGraphic = this.defaultPlayerGraphic;
-		
+
+		this.playerGraphic.gameObject.SetActive(true);
+		// le rend visible et matériel
+		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = true;
+		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = true;
+		this.canShoot = true;
 	}
 
 }

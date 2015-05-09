@@ -31,16 +31,16 @@ public class GameManager : MonoBehaviour {
 		if (oldPlayer) {
 			oldPlayer.RevertToHuman();
 		}
-
-		// Stoppe le joueur après l'avoir mis à son spawn
-		player.playerGraphic.transform.position = player.playerGraphic.GetComponent<PlayerMovement> ().spawn.transform.position;
-		player.playerGraphic.gameObject.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
-
+		
 		Debug.Log ("slayn by " + player);
 
 		// Change le role du monstre
 		player.BecomeMonster( monstre.GetComponent<Monstre>() );
 		monstre.GetComponent<PlayerMovement> ().controller = player;
+
+	}
+
+	void BeMonster(PlayerController oldPlayer){
 
 	}
 
