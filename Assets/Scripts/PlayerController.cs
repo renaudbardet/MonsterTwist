@@ -36,9 +36,9 @@ public class PlayerController : MonoBehaviour {
 
 	private bool isDodging=false;
 
-	private Animator anim;
 
 	Orient currentHeading = Orient.Right;
+	Orient lastHorizontalHeading = Orient.Right;
 
 	// Use this for initialization
 	void Start () {
@@ -47,8 +47,7 @@ public class PlayerController : MonoBehaviour {
 		//characterController = GetComponent<CharacterController>();
 		defaultPlayerGraphic.controller = this;
 
-		anim = GetComponent<Animator> ();
-		anim.runtimeAnimatorController = animPlayerMode ;
+		playerGraphic.GetComponent<Animator>().runtimeAnimatorController = animPlayerMode ;
 	}
 
 	bool getIsStun() {
@@ -57,7 +56,7 @@ public class PlayerController : MonoBehaviour {
 
 	// Update is called once per frame
 	void Update () {
-
+		playerGraphic.GetComponent<Animator>().SetBool ("Attack",false );
 		if (getIsStun())
 			return;
 
@@ -72,8 +71,19 @@ public class PlayerController : MonoBehaviour {
 		movementVector.z = 0;
 		movementVector.y = yAxis;
 
-		Debug.Log (xAxis + " et " + yAxis);
-		anim.SetFloat ("Speed", Mathf.Abs (xAxis+yAxis));
+		if(isMonster)
+			playerGraphic.GetComponent<Animator>().SetFloat ("Speed", Mathf.Abs (xAxis+yAxis));
+
+		switch (lastHorizontalHeading) {
+		case(Orient.Right):
+			playerGraphic.transform.localScale = new Vector3 (1, 1, 1);
+			break;
+		case(Orient.Left):
+			playerGraphic.transform.localScale = new Vector3 (-1, 1, 1);
+			break;
+		default:
+			break;
+		}
 		
 
 		float xAxisFire = Input.GetAxis("HorizontalFire_P" + joystickString) ;
@@ -175,6 +185,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	void hitCloseRange(){
+		playerGraphic.GetComponent<Animator>().SetBool ("Attack",true );
+		
 		Debug.Log("try hitting smthg");
 
 		lastPunch = Time.time;
@@ -197,6 +209,8 @@ public class PlayerController : MonoBehaviour {
 				Destroy (collider.gameObject);
 			}
 		}
+
+		
 
 	}
 		
@@ -229,20 +243,26 @@ public class PlayerController : MonoBehaviour {
 			break;
 		}
 
+
 	}
 
 	void setHeading( Orient newHeading ) {
 
 		if (newHeading != currentHeading) {
 			currentHeading = newHeading;
+			switch(currentHeading){
+				case Orient.Left :
+				case Orient.Right :
+					lastHorizontalHeading = currentHeading;
+					break;
+				default:
+				break;
+				}
 		}
 
 	}
 
 	public void BecomeMonster( Monstre monster ) {
-
-		anim.runtimeAnimatorController = animMonsterMode;
-
 		monster.nbCrush = 0;
 		monster.life = monster.maxLife;
 
@@ -256,13 +276,11 @@ public class PlayerController : MonoBehaviour {
 
 		isMonster = true;
 		this.playerGraphic = monster.gameObject;
+		playerGraphic.GetComponent<Animator>().runtimeAnimatorController = animMonsterMode;
 		
 	}
 
 	public void RevertToHuman() {
-
-		anim.runtimeAnimatorController = animPlayerMode;
-
 		isMonster = false;
 		this.playerGraphic = this.defaultPlayerGraphic.gameObject;
 
@@ -271,6 +289,7 @@ public class PlayerController : MonoBehaviour {
 		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = true;
 		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = true;
 		this.canShoot = true;
+		playerGraphic.GetComponent<Animator>().runtimeAnimatorController = animPlayerMode;
 
 	}
 
