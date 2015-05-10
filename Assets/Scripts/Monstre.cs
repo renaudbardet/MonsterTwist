@@ -5,7 +5,6 @@ public class Monstre : MonoBehaviour {
 
 	public PlayerController controller;
 	public int nbCrush = 0;
-	
 
 	public int maxLife = 5;
 	
@@ -23,6 +22,7 @@ public class Monstre : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
+		life = 0;
 	}
 	
 	// Update is called once per frame

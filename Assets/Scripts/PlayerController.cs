@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour {
 
 	private bool isDodging=false;
 
+	public Color color;
 
 	Orient currentHeading = Orient.Right;
 	Orient lastHorizontalHeading = Orient.Right;
@@ -277,6 +278,7 @@ public class PlayerController : MonoBehaviour {
 		isMonster = true;
 		this.playerGraphic = monster.gameObject;
 		playerGraphic.GetComponent<Animator>().runtimeAnimatorController = animMonsterMode;
+		monster.lifeBar.GetComponent<SpriteRenderer> ().color = color;
 		
 	}
 
