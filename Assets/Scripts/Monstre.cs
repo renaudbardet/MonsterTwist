@@ -23,12 +23,10 @@ public class Monstre : MonoBehaviour {
 	
 	// Use this for initialization
 	void Start () {
-		life = maxLife;
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
 	}
 
 	void OnCollisionEnter2D(Collision2D collision) {

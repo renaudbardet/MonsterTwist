@@ -283,8 +283,6 @@ public class PlayerController : MonoBehaviour {
 
 	}
 
-	public Transform debugCubePrefab;
-
 	Collider2D CheckHitClose() {
 
 		Collider2D ret = null;
