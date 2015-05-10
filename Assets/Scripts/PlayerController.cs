@@ -35,6 +35,7 @@ public class PlayerController : MonoBehaviour {
 	public bool isMonster = false;
 
 	private bool isDodging=false;
+	public float dodgeForce = 40;
 
 	public Color color;
 
@@ -71,16 +72,15 @@ public class PlayerController : MonoBehaviour {
 		movementVector.x = xAxis;
 		movementVector.z = 0;
 		movementVector.y = yAxis;
-
-		if(isMonster)
-			playerGraphic.GetComponent<Animator>().SetFloat ("Speed", Mathf.Abs (xAxis+yAxis));
+		
+		playerGraphic.GetComponent<Animator>().SetFloat ("Speed", Mathf.Abs (xAxis+yAxis));
 
 		switch (lastHorizontalHeading) {
 		case(Orient.Right):
-			playerGraphic.transform.localScale = new Vector3 (1, 1, 1);
+			playerGraphic.transform.localScale = new Vector3 (Mathf.Abs(playerGraphic.transform.localScale.x), playerGraphic.transform.localScale.y, 1);
 			break;
 		case(Orient.Left):
-			playerGraphic.transform.localScale = new Vector3 (-1, 1, 1);
+			playerGraphic.transform.localScale = new Vector3 (-Mathf.Abs(playerGraphic.transform.localScale.x), playerGraphic.transform.localScale.y, 1);
 			break;
 		default:
 			break;
@@ -163,16 +163,16 @@ public class PlayerController : MonoBehaviour {
 		Vector3 movementVector = new Vector3 (0, 0, 0);
 		switch( currentHeading ) {
 		case Orient.Up:
-			movementVector.y += 20;
+			movementVector.y += dodgeForce;
 			break;
 		case Orient.Down:
-			movementVector.y -= 20;
+			movementVector.y -= dodgeForce;
 			break;
 		case Orient.Left:
-			movementVector.x -= 20;
+			movementVector.x -= dodgeForce;
 			break;
 		case Orient.Right:
-			movementVector.x += 20;
+			movementVector.x += dodgeForce;
 			break;
 		}
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
