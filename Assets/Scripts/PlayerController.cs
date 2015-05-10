@@ -319,7 +319,7 @@ public class PlayerController : MonoBehaviour {
 		case Orient.Up:
 			hit = Physics2D.BoxCast (
 				playerGraphic.transform.position - (Vector3.up*errorDistance)
-				, playerSize, .0f, Vector2.up, 1);
+				, playerSize, .0f, Vector2.up, 2);
 
 			ret = hit.collider;
 			break;
@@ -327,7 +327,7 @@ public class PlayerController : MonoBehaviour {
 		case Orient.Down:
 			hit = Physics2D.BoxCast (
 				playerGraphic.transform.position + (Vector3.up*errorDistance)
-				, playerSize, .0f, -Vector2.up, 1);
+				, playerSize, .0f, -Vector2.up, 2);
 
 			ret = hit.collider;
 			break;
@@ -335,7 +335,7 @@ public class PlayerController : MonoBehaviour {
 		case Orient.Left:
 			hit = Physics2D.BoxCast (
 				playerGraphic.transform.position + (Vector3.right*errorDistance)
-				, playerSize, .0f, -Vector2.right, 1);
+				, playerSize, .0f, -Vector2.right, 2);
 			
 			ret = hit.collider;
 			break;
@@ -343,7 +343,7 @@ public class PlayerController : MonoBehaviour {
 		case Orient.Right:
 			hit = Physics2D.BoxCast (
 				playerGraphic.transform.position - (Vector3.right*errorDistance)
-				, playerSize, .0f, Vector2.right, 1);
+				, playerSize, .0f, Vector2.right, 2);
 			
 			ret = hit.collider;
 			break;
