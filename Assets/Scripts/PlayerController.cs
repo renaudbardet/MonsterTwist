@@ -11,7 +11,7 @@ public class PlayerController : MonoBehaviour {
 	public Arrow arrow;
 	public Arrow fireball;
 	private Vector3 movementVector;
-	private float movementSpeed = 6;
+	public float movementSpeed = 12;
 
 	public double arrowCooldown = .5;
 	public double fireballCooldown = 2;
@@ -86,11 +86,10 @@ public class PlayerController : MonoBehaviour {
 		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
 
 		if (isCloseRange () || isMonster) {
-
 			if (	Input.GetButton ("Fire_P" + joystickString) 
 			    && ((Time.time - lastPunch) > GetPunchCooldown())
 			) {
-
+				Debug.Log ("TRY HIT CLOSE RANGE"); 
 				hitCloseRange();
 
 			}
@@ -165,7 +164,7 @@ public class PlayerController : MonoBehaviour {
 		playerGraphic.GetComponent<Collider2D> ().enabled = false;
 		switch (currentHeading) {
 		case Orient.Up:
-			CheckHit( Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.up, 1) );
+			CheckHit( Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.up,1 ) );
 			break;
 		case Orient.Down:
 			CheckHit( Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, -Vector2.up, 1) );
@@ -181,11 +180,16 @@ public class PlayerController : MonoBehaviour {
 
 	}
 	void CheckHit(RaycastHit2D hit) {
+		Debug.Log ("CHECK HIT DUDE");
+
 		if (hit.collider == null) return;
-		Debug.Log("hitting smthg");
-		if (hit.collider.GetComponent<Monstre> () != null)
+		Debug.Log("hitting smthg"+ hit.collider.name);
+		if (hit.collider.GetComponent<Monstre> () != null) {
+			Debug.Log ("Monstre not null"); 
 			GameManager.instance.PlayerHitMonster (this);
+		}
 		else if (isMonster) {
+			Debug.Log ("Is monster true");
 			if (hit.collider.GetComponent<PlayerMovement> () != null) {
 				Debug.Log("hitting someone");
 				hit.collider.GetComponent<PlayerMovement> ().controller.TakeDamage ();
@@ -209,16 +213,19 @@ public class PlayerController : MonoBehaviour {
 		
 		switch (currentHeading) {
 		case Orient.Up:
-			aRigidbody.velocity = new Vector3 (0, a.initialVelocity);
+			aRigidBody.velocity = new Vector3 (0, a.initialVelocity*arrowSpeed);
+			aRigidBody.rotation = 90;
 			break;
 		case Orient.Down:
-			aRigidbody.velocity = new Vector3 (0, -a.initialVelocity);
+			aRigidBody.velocity = new Vector3 (0, -a.initialVelocity*arrowSpeed);
+			aRigidBody.rotation = 90;
+
 			break;
 		case Orient.Left:
-			aRigidbody.velocity = new Vector3 (-a.initialVelocity, 0);
+			aRigidBody.velocity = new Vector3 (-a.initialVelocity*arrowSpeed, 0);
 			break;
 		case Orient.Right:
-			aRigidbody.velocity = new Vector3 (a.initialVelocity, 0);
+			aRigidBody.velocity = new Vector3 (a.initialVelocity*arrowSpeed, 0);
 			break;
 		}
 
@@ -273,28 +280,36 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public bool isCloseRange() {
-
 		bool ret = false;
+		RaycastHit2D hit ; 
+
 		playerGraphic.GetComponent<Collider2D> ().enabled = false;
 		switch (currentHeading) {
 		case Orient.Up:
-			RaycastHit2D hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.up, 1);
-			if( hit.collider != null && hit.distance < 1 )
+			hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.up, 1);
+
+
+			if( hit.collider != null && Mathf.Abs( hit.distance) < 1 && (LayerMask.LayerToName (hit.collider.gameObject.layer) == "Monster"))
 				ret = true;
 			break;
 		case Orient.Down:
 			hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, -Vector2.up, 1);
-			if( hit.collider != null && hit.distance < 1 )
+
+
+			if( hit.collider != null && Mathf.Abs( hit.distance) < 1 && (LayerMask.LayerToName (hit.collider.gameObject.layer) == "Monster"))
 				ret = true;
 			break;
 		case Orient.Left:
 			hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, -Vector2.right, 1);
-			if( hit.collider != null && hit.distance < 1 )
+
+			if( hit.collider != null && Mathf.Abs( hit.distance)< 1 && (LayerMask.LayerToName (hit.collider.gameObject.layer) == "Monster"))
 				ret = true;
 			break;
+		default:
 		case Orient.Right:
 			hit = Physics2D.BoxCast (playerGraphic.transform.position, playerGraphic.GetComponent<Renderer>().bounds.size, .0f, Vector2.right, 1);
-			if( hit.collider != null && hit.distance < 1 )
+			
+			if( hit.collider != null && hit.distance < 1 && (LayerMask.LayerToName (hit.collider.gameObject.layer) == "Monster"))
 				ret = true;
 			break;
 		}
