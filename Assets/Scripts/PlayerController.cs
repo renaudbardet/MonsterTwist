@@ -8,13 +8,17 @@ public class PlayerController : MonoBehaviour {
 	public int joystickNumber;
 	public bool canShoot = true;
 
-	public Rigidbody2D arrow;
+	public Arrow arrow;
+	public Arrow fireball;
 	private Vector3 movementVector;
 	public float movementSpeed = 15;
 
 	public double arrowCooldown = .5;
 	private double lastArrowShot = 0;
 	public float arrowSpeed = 3;
+
+	public double fireballCooldown = 2;
+	private double lastProjectileShot = 0;
 	
 	public double humanPunchCooldown = .3;
 	public double monsterPunchCooldown = .7;
@@ -28,6 +32,8 @@ public class PlayerController : MonoBehaviour {
 
 	public bool isMonster = false;
 
+	private bool isDodging=false;
+
 	Orient currentHeading = Orient.Right;
 
 	// Use this for initialization
@@ -37,12 +43,19 @@ public class PlayerController : MonoBehaviour {
 		//characterController = GetComponent<CharacterController>();
 		defaultPlayerGraphic.controller = this;
 	}
-	
+
+	bool getIsStun() {
+		return Time.time - isStunSince < stunDelay;
+	}
+
 	// Update is called once per frame
 	void Update () {
 
-		if (Time.time - isStunSince < stunDelay)
+		if (getIsStun())
 			return;
+
+		if (isDodging && Time.time - lastDodged > dodgeTime)
+			endDodge ();
 
 		string joystickString = joystickNumber.ToString();
 
@@ -92,13 +105,62 @@ public class PlayerController : MonoBehaviour {
 
 			if (	!isMonster && canShoot
 	    		&& Input.GetButton ("Fire_P" + joystickString) 
-	    		&& ((Time.time - lastArrowShot) > arrowCooldown)
+			    && ((Time.time - lastProjectileShot) > arrowCooldown)
 		    	) {
 				
-				shootArrow();
+				shoot( arrow );
 
 			}
 		}
+
+		if ( Input.GetButton ("Dodge_P" + joystickString) ) {
+
+			if ( !isMonster )
+				dodge();
+			else if ( (Time.time - lastProjectileShot) > fireballCooldown )
+				shoot( fireball );
+			
+		}
+		
+	}
+
+	private double lastDodged = 0;
+	public double dodgeTime = .3;
+	public double dodgeCooldown = 1;
+
+	void dodge() {
+
+		if ( isDodging || getIsStun() || isMonster )
+			return;
+
+		if (Time.time - lastDodged < (dodgeTime + dodgeCooldown))
+			return;
+
+		isDodging = true;
+
+		Vector3 movementVector = new Vector3 (0, 0, 0);
+		switch( currentHeading ) {
+		case Orient.Up:
+			movementVector.y += 20;
+			break;
+		case Orient.Down:
+			movementVector.y -= 20;
+			break;
+		case Orient.Left:
+			movementVector.x -= 20;
+			break;
+		case Orient.Right:
+			movementVector.x += 20;
+			break;
+		}
+		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
+		playerGraphic.GetComponent<Collider2D> ().enabled = false;
+
+	}
+
+	void endDodge() {
+		playerGraphic.GetComponent<Collider2D> ().enabled = true;
+		isDodging = false;
 	}
 
 	void hitCloseRange(){
@@ -144,13 +206,13 @@ public class PlayerController : MonoBehaviour {
 		}
 	}
 		
-	void shootArrow() {
+	void shoot( Arrow arrowType ) {
 
-		lastArrowShot = Time.time;
-		
-		Rigidbody2D aRigidBody = Instantiate (arrow, playerGraphic.transform.position, transform.rotation) as Rigidbody2D;
-		
-		Arrow a = aRigidBody.GetComponent<Arrow> ();
+		lastProjectileShot = Time.time;
+
+		Arrow a = Instantiate (arrowType, playerGraphic.transform.position, transform.rotation) as Arrow;
+		Rigidbody2D aRigidBody = a.GetComponent<Rigidbody2D> ();
+
 		a.owner = this;
 		
 		Physics2D.IgnoreCollision (a.GetComponent<Collider2D> (), playerGraphic.GetComponent<Collider2D> ());
@@ -194,6 +256,7 @@ public class PlayerController : MonoBehaviour {
 		this.playerGraphic.GetComponent<BoxCollider2D> ().enabled  = false;
 		this.playerGraphic.GetComponent<SpriteRenderer> ().enabled  = false;
 		this.canShoot  = false;
+		this.isDodging = false;
 
 		isMonster = true;
 		this.playerGraphic = monster.gameObject;
@@ -217,6 +280,7 @@ public class PlayerController : MonoBehaviour {
 
 		RevertToHuman ();
 
+		endDodge ();
 		playerGraphic.transform.position = defaultPlayerGraphic.spawn.transform.position;
 
 	}
