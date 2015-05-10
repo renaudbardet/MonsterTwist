@@ -5,6 +5,10 @@ public class PlayerController : MonoBehaviour {
 
 	public GameObject playerGraphic;
 	public PlayerMovement defaultPlayerGraphic;
+
+	public RuntimeAnimatorController animPlayerMode;
+	public RuntimeAnimatorController animMonsterMode;
+
 	public int joystickNumber;
 	public bool canShoot = true;
 
@@ -32,6 +36,8 @@ public class PlayerController : MonoBehaviour {
 
 	private bool isDodging=false;
 
+	private Animator anim;
+
 	Orient currentHeading = Orient.Right;
 
 	// Use this for initialization
@@ -40,6 +46,9 @@ public class PlayerController : MonoBehaviour {
 		//movementVector.y = transform.position.y;
 		//characterController = GetComponent<CharacterController>();
 		defaultPlayerGraphic.controller = this;
+
+		anim = GetComponent<Animator> ();
+		anim.runtimeAnimatorController = animPlayerMode ;
 	}
 
 	bool getIsStun() {
@@ -62,6 +71,10 @@ public class PlayerController : MonoBehaviour {
 		movementVector.x = xAxis;
 		movementVector.z = 0;
 		movementVector.y = yAxis;
+
+		Debug.Log (xAxis + " et " + yAxis);
+		anim.SetFloat ("Speed", Mathf.Abs (xAxis+yAxis));
+		
 
 		float xAxisFire = Input.GetAxis("HorizontalFire_P" + joystickString) ;
 		float yAxisFire = - Input.GetAxis("VerticalFire_P" + joystickString) ;
@@ -228,6 +241,8 @@ public class PlayerController : MonoBehaviour {
 
 	public void BecomeMonster( Monstre monster ) {
 
+		anim.runtimeAnimatorController = animMonsterMode;
+
 		monster.nbCrush = 0;
 		monster.life = monster.maxLife;
 
@@ -245,7 +260,9 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void RevertToHuman() {
-		
+
+		anim.runtimeAnimatorController = animPlayerMode;
+
 		isMonster = false;
 		this.playerGraphic = this.defaultPlayerGraphic.gameObject;
 
