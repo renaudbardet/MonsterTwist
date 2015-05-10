@@ -11,9 +11,10 @@ public class PlayerController : MonoBehaviour {
 	public Arrow arrow;
 	public Arrow fireball;
 	private Vector3 movementVector;
-	public float movementSpeed = 12;
+	public float movementSpeed = 15;
 
 	public double arrowCooldown = .5;
+
 	public double fireballCooldown = 2;
 	private double lastProjectileShot = 0;
 	
@@ -62,22 +63,25 @@ public class PlayerController : MonoBehaviour {
 		movementVector.z = 0;
 		movementVector.y = yAxis;
 
-		float xAxisDelta = Mathf.Abs (xAxis);
-		float yAxisDelta = Mathf.Abs (yAxis);
+		float xAxisFire = Input.GetAxis("HorizontalFire_P" + joystickString) ;
+		float yAxisFire = - Input.GetAxis("VerticalFire_P" + joystickString) ;
+
+		float xAxisDelta = Mathf.Abs (xAxisFire);
+		float yAxisDelta = Mathf.Abs (yAxisFire);
 
 		if (xAxisDelta > yAxisDelta) {
 
-			if (xAxis < 0) {
+			if (xAxisFire < 0) {
 				setHeading (Orient.Left);
-			} else if (xAxis > 0) {
+			} else if (xAxisFire > 0) {
 				setHeading (Orient.Right);
 			}
 
 		} else {
 
-			if (yAxis < 0) {
+			if (yAxisFire < 0) {
 				setHeading (Orient.Down);
-			} else if (yAxis > 0) {
+			} else if (yAxisFire > 0) {
 				setHeading (Orient.Up);
 			}
 
