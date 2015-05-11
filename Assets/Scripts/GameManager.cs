@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour {
 
 		Debug.Log ("slayn by " + player);
 
+		monstre.GetComponent<Animator>().SetBool ("Death", true);
 	}
 
 	public void PlayerBecomeMonster( PlayerController player ){
@@ -62,7 +63,8 @@ public class GameManager : MonoBehaviour {
 		// Change le role du monstre
 		player.BecomeMonster( monstre );
 		monstre.controller = player;
-
+		monstre.GetComponent<Animator>().SetBool ("Death", false);
+		
 	}
 
 	public void MonsterWin(){
