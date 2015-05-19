@@ -70,11 +70,11 @@ public class GameManager : MonoBehaviour {
 	public void MonsterWin(){
 		
 		monstre.GetComponent<Monstre> ().Respawn();
-		
-		joueur1.GetComponent<PlayerMovement> ().controller.RevertToHuman ();
-		joueur2.GetComponent<PlayerMovement> ().controller.RevertToHuman ();
-		joueur3.GetComponent<PlayerMovement> ().controller.RevertToHuman ();
-		joueur4.GetComponent<PlayerMovement> ().controller.RevertToHuman ();
+
+		joueur1.GetComponent<PlayerMovement> ().controller.Respawn();
+		joueur2.GetComponent<PlayerMovement> ().controller.Respawn();
+		joueur3.GetComponent<PlayerMovement> ().controller.Respawn();
+		joueur4.GetComponent<PlayerMovement> ().controller.Respawn();
 
 		batiment1.GetComponent<Batiment>().Reapparai();
 		batiment2.GetComponent<Batiment>().Reapparai();

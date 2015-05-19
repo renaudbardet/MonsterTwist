@@ -23,8 +23,12 @@ public class Arrow : MonoBehaviour {
 //		if (playerHit != null && playerHit.controller == owner)
 //			return;
 
-		Destroy (gameObject);
-		
+//			Destroy (gameObject);
+
+		if (collision.gameObject.layer != 11) { // Layer 11 = Arrow
+			if (this.explosive) Camera.main.GetComponent<Animator>().Play("ScreenShake");
+			Destroy (gameObject);
+		}
 	}
 
 }

@@ -23,6 +23,7 @@ public class Monstre : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		life = 0;
+		this.GetComponent<Animator>().SetBool ("Death", true);
 	}
 	
 	// Update is called once per frame
@@ -49,6 +50,7 @@ public class Monstre : MonoBehaviour {
 		this.transform.localPosition = new Vector3 (0, 0, 0);
 		life = 0;
 		nbCrush = 0;
+		this.GetComponent<Animator>().SetBool ("Death", true);
 	}
 
 }
