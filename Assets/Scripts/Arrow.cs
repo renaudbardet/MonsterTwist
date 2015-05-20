@@ -26,8 +26,15 @@ public class Arrow : MonoBehaviour {
 //			Destroy (gameObject);
 
 		if (collision.gameObject.layer != 11) { // Layer 11 = Arrow
-			if (this.explosive) Camera.main.GetComponent<Animator>().Play("ScreenShake");
-			Destroy (gameObject);
+			if (this.explosive){
+				Camera.main.GetComponent<Animator>().Play("ScreenShake");
+				this.GetComponent<Animator>().Play("Explosion");
+
+				Destroy (gameObject);
+			}
+			else{
+				Destroy (gameObject);
+			}
 		}
 	}
 

@@ -11,6 +11,8 @@ public class PlayerController : MonoBehaviour {
 
 	public int joystickNumber;
 	public bool canShoot = true;
+	private bool isDead = false;
+	private float deathDelay = 2.0f;
 
 	public Arrow arrow;
 	public Arrow fireball;
@@ -45,10 +47,7 @@ public class PlayerController : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		playerGraphic = defaultPlayerGraphic.gameObject;
-		//movementVector.y = transform.position.y;
-		//characterController = GetComponent<CharacterController>();
 		defaultPlayerGraphic.controller = this;
-
 		playerGraphic.GetComponent<Animator>().runtimeAnimatorController = animPlayerMode ;
 	}
 
@@ -65,85 +64,90 @@ public class PlayerController : MonoBehaviour {
 		if (isDodging && Time.time - lastDodged > dodgeTime)
 			endDodge ();
 
-		string joystickString = joystickNumber.ToString();
-
-		float xAxis = Input.GetAxis("Horizontal_P" + joystickString) * movementSpeed;
-		float yAxis = - Input.GetAxis("Vertical_P" + joystickString) * movementSpeed;
-		movementVector.x = xAxis;
-		movementVector.z = 0;
-		movementVector.y = yAxis;
-		
-		playerGraphic.GetComponent<Animator>().SetFloat ("Speed", Mathf.Abs (xAxis+yAxis));
-
-		switch (lastHorizontalHeading) {
-		case(Orient.Right):
-			playerGraphic.transform.localScale = new Vector3 (Mathf.Abs(playerGraphic.transform.localScale.x), playerGraphic.transform.localScale.y, 1);
-			break;
-		case(Orient.Left):
-			playerGraphic.transform.localScale = new Vector3 (-Mathf.Abs(playerGraphic.transform.localScale.x), playerGraphic.transform.localScale.y, 1);
-			break;
-		default:
-			break;
-		}
-		
-
-		float xAxisFire = Input.GetAxis("HorizontalFire_P" + joystickString) ;
-		float yAxisFire = - Input.GetAxis("VerticalFire_P" + joystickString) ;
-
-		float xAxisDelta = Mathf.Abs (xAxisFire);
-		float yAxisDelta = Mathf.Abs (yAxisFire);
-
-		if (xAxisDelta > yAxisDelta) {
-
-			if (xAxisFire < 0) {
-				setHeading (Orient.Left);
-			} else if (xAxisFire > 0) {
-				setHeading (Orient.Right);
-			}
-
-		} else {
-
-			if (yAxisFire < 0) {
-				setHeading (Orient.Down);
-			} else if (yAxisFire > 0) {
-				setHeading (Orient.Up);
-			}
-
-		}
-
-		playerGraphic.GetComponent<Rigidbody2D>().velocity = movementVector;
-
-		if ( Input.GetButtonDown ("Fire_P" + joystickString) ) {
-
-			if ( CheckHitClose() != null || isMonster) {
-				if ((Time.time - lastPunch) > GetPunchCooldown() ) {
-
-					Debug.Log ("TRY HIT CLOSE RANGE"); 
-					hitCloseRange();
-
-				}
-			}
-			else {
-
-				if (	!isMonster && canShoot
-		    		&& ((Time.time - lastProjectileShot) > arrowCooldown)
-			    	) {
-					
-					shoot( arrow );
-
-				}
-			}
-		}
-
-		if ( Input.GetButtonDown ("Dodge_P" + joystickString) ) {
-
-			if ( !isMonster )
-				dodge();
-			else if ( (Time.time - lastProjectileShot) > fireballCooldown )
-				shoot( fireball );
+		if (Input.GetButtonDown ("ButtonA_P1")) {
+			GameManager.instance.isInstruc = false;
+			Debug.Log ("Instruciton coupé");
 			
 		}
+
+		if (!isDead && !GameManager.instance.isInstruc) {
+			string joystickString = joystickNumber.ToString ();
+
+			float xAxis = Input.GetAxis ("Horizontal_P" + joystickString) * movementSpeed;
+			float yAxis = - Input.GetAxis ("Vertical_P" + joystickString) * movementSpeed;
+			movementVector.x = xAxis;
+			movementVector.z = 0;
+			movementVector.y = yAxis;
 		
+			playerGraphic.GetComponent<Animator> ().SetFloat ("Speed", Mathf.Abs (xAxis + yAxis));
+
+			switch (lastHorizontalHeading) {
+			case(Orient.Right):
+				playerGraphic.transform.localScale = new Vector3 (Mathf.Abs (playerGraphic.transform.localScale.x), playerGraphic.transform.localScale.y, 1);
+				break;
+			case(Orient.Left):
+				playerGraphic.transform.localScale = new Vector3 (-Mathf.Abs (playerGraphic.transform.localScale.x), playerGraphic.transform.localScale.y, 1);
+				break;
+			default:
+				break;
+			}
+		
+
+			float xAxisFire = Input.GetAxis ("HorizontalFire_P" + joystickString);
+			float yAxisFire = - Input.GetAxis ("VerticalFire_P" + joystickString);
+
+			float xAxisDelta = Mathf.Abs (xAxisFire);
+			float yAxisDelta = Mathf.Abs (yAxisFire);
+
+			if (xAxisDelta > yAxisDelta) {
+
+				if (xAxisFire < 0) {
+					setHeading (Orient.Left);
+				} else if (xAxisFire > 0) {
+					setHeading (Orient.Right);
+				}
+
+			} else {
+
+				if (yAxisFire < 0) {
+					setHeading (Orient.Down);
+				} else if (yAxisFire > 0) {
+					setHeading (Orient.Up);
+				}
+
+			}
+
+			playerGraphic.GetComponent<Rigidbody2D> ().velocity = movementVector;
+
+			if (Input.GetButtonDown ("Fire_P" + joystickString)) {
+
+				if (CheckHitClose () != null || isMonster) {
+					if ((Time.time - lastPunch) > GetPunchCooldown ()) {
+
+						Debug.Log ("TRY HIT CLOSE RANGE"); 
+						hitCloseRange ();
+
+					}
+				} else {
+
+					if (!isMonster && canShoot
+						&& ((Time.time - lastProjectileShot) > arrowCooldown)
+			    	) {
+					
+						shoot (arrow);
+
+					}
+				}
+			}
+
+			if (Input.GetButtonDown ("Dodge_P" + joystickString)) {
+
+				if (!isMonster)
+					dodge ();
+				else if ((Time.time - lastProjectileShot) > fireballCooldown)
+					shoot (fireball);
+			}
+		}
 	}
 
 	private double lastDodged = 0;
@@ -295,12 +299,20 @@ public class PlayerController : MonoBehaviour {
 
 	}
 
-	public void Respawn() {
-
+	public IEnumerator Respawn() {
+		isDead = true;
+		this.playerGraphic.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
+		
 		RevertToHuman ();
 
 		endDodge ();
+
+		// Anim de mort
+		//playerGraphic.GetComponent<Animator>().SetBool ("Death",true );
+		yield return new WaitForSeconds(deathDelay);
 		playerGraphic.transform.position = defaultPlayerGraphic.spawn.transform.position;
+		//playerGraphic.GetComponent<Animator>().SetBool ("Death",false );
+		isDead = false;
 
 	}
 
@@ -356,7 +368,7 @@ public class PlayerController : MonoBehaviour {
 
 	public void TakeDamage() {
 		if (!isMonster) {
-			Respawn();
+			StartCoroutine(Respawn());
 		}
 	}
 

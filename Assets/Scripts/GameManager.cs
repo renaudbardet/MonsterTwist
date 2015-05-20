@@ -18,9 +18,14 @@ public class GameManager : MonoBehaviour {
 	public Monstre monstre;
 	private PlayerController oldPlayer;
 
+	public GameObject instruction;
+	public bool isInstruc = true;
+
 	// Use this for initialization
 	void Start () {
 		instance = this;
+		if(isInstruc)
+		LaunchInstruction ();
 	}
 	
 	// Update is called once per frame
@@ -71,10 +76,10 @@ public class GameManager : MonoBehaviour {
 		
 		monstre.GetComponent<Monstre> ().Respawn();
 
-		joueur1.GetComponent<PlayerMovement> ().controller.Respawn();
-		joueur2.GetComponent<PlayerMovement> ().controller.Respawn();
-		joueur3.GetComponent<PlayerMovement> ().controller.Respawn();
-		joueur4.GetComponent<PlayerMovement> ().controller.Respawn();
+		joueur1.GetComponent<PlayerMovement> ().controller.StartCoroutine(joueur1.GetComponent<PlayerMovement> ().controller.Respawn());
+		joueur2.GetComponent<PlayerMovement> ().controller.StartCoroutine(joueur2.GetComponent<PlayerMovement> ().controller.Respawn());
+		joueur3.GetComponent<PlayerMovement> ().controller.StartCoroutine(joueur3.GetComponent<PlayerMovement> ().controller.Respawn());
+		joueur4.GetComponent<PlayerMovement> ().controller.StartCoroutine(joueur4.GetComponent<PlayerMovement> ().controller.Respawn());
 
 		batiment1.GetComponent<Batiment>().Reapparai();
 		batiment2.GetComponent<Batiment>().Reapparai();
@@ -82,5 +87,8 @@ public class GameManager : MonoBehaviour {
 		batiment4.GetComponent<Batiment>().Reapparai();
 
 	}
-
+	public void LaunchInstruction(){
+		//Instantiate (instruction);
+		Debug.Log ("Instruciton lancé");
+	}
 }

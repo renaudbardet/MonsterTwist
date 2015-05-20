@@ -21,7 +21,7 @@ public class Batiment : MonoBehaviour {
 
 			if (collision.gameObject.GetComponent<Monstre> ().controller != player){
 				collision.gameObject.GetComponent<Monstre>().nbCrush ++;
-				this.GetComponent<BoxCollider2D> ().enabled  = false;
+				this.GetComponent<CircleCollider2D> ().enabled  = false;
 				this.GetComponent<SpriteRenderer> ().enabled  = false;
 
 				if (collision.gameObject.GetComponent<Monstre>().nbCrush >= 3){
@@ -32,7 +32,7 @@ public class Batiment : MonoBehaviour {
 	}
 
 	public void Reapparai(){
-		this.GetComponent<BoxCollider2D> ().enabled  = true;
+		this.GetComponent<CircleCollider2D> ().enabled  = true;
 		this.GetComponent<SpriteRenderer> ().enabled  = true;
 	}
 }
