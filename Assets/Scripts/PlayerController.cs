@@ -58,20 +58,25 @@ public class PlayerController : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		playerGraphic.GetComponent<Animator>().SetBool ("Attack",false );
+
 		if (getIsStun())
 			return;
 
 		if (isDodging && Time.time - lastDodged > dodgeTime)
 			endDodge ();
 
-		if (Input.GetButtonDown ("ButtonA_P1")) {
+		string joystickString = joystickNumber.ToString ();
+
+		if (Input.GetButtonDown ("ButtonA_P" + joystickString)) {
 			GameManager.instance.isInstruc = false;
 			Debug.Log ("Instruciton coupé");
 			
 		}
+		if (Input.GetButtonDown ("ButtonStart_P" + joystickString)) {
+			GameManager.instance.isInstruc = !GameManager.instance.isInstruc;
+		}
 
 		if (!isDead && !GameManager.instance.isInstruc) {
-			string joystickString = joystickNumber.ToString ();
 
 			float xAxis = Input.GetAxis ("Horizontal_P" + joystickString) * movementSpeed;
 			float yAxis = - Input.GetAxis ("Vertical_P" + joystickString) * movementSpeed;

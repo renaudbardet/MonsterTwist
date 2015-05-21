@@ -19,18 +19,26 @@ public class GameManager : MonoBehaviour {
 	private PlayerController oldPlayer;
 
 	public GameObject instruction;
+	public GameObject appuyez;
 	public bool isInstruc = true;
 
 	// Use this for initialization
 	void Start () {
 		instance = this;
-		if(isInstruc)
-		LaunchInstruction ();
 	}
 	
 	// Update is called once per frame
 	void Update () {
+		instruction.GetComponent<Renderer> ().enabled = isInstruc;
+		appuyez.GetComponent<Renderer> ().enabled = isInstruc;
 
+		if (isInstruc) {
+			joueur1.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
+			joueur2.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
+			joueur3.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
+			joueur4.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
+		}
+		
 	}
 
 	public void PlayerHitMonster( PlayerController player ){
@@ -87,8 +95,5 @@ public class GameManager : MonoBehaviour {
 		batiment4.GetComponent<Batiment>().Reapparai();
 
 	}
-	public void LaunchInstruction(){
-		//Instantiate (instruction);
-		Debug.Log ("Instruciton lancé");
-	}
+
 }

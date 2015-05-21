@@ -3,6 +3,8 @@ using System.Collections;
 
 public class Batiment : MonoBehaviour {
 	public PlayerController player;
+	public Sprite notTaken;
+	public Sprite taken;
 
 	// Use this for initialization
 	void Start () {
@@ -21,8 +23,8 @@ public class Batiment : MonoBehaviour {
 
 			if (collision.gameObject.GetComponent<Monstre> ().controller != player){
 				collision.gameObject.GetComponent<Monstre>().nbCrush ++;
-				this.GetComponent<CircleCollider2D> ().enabled  = false;
-				this.GetComponent<SpriteRenderer> ().enabled  = false;
+				this.GetComponent<BoxCollider2D> ().enabled  = false;
+				this.GetComponent<SpriteRenderer> ().sprite  = taken;
 
 				if (collision.gameObject.GetComponent<Monstre>().nbCrush >= 3){
 					GameManager.instance.GetComponent<GameManager>().MonsterWin();
@@ -32,7 +34,7 @@ public class Batiment : MonoBehaviour {
 	}
 
 	public void Reapparai(){
-		this.GetComponent<CircleCollider2D> ().enabled  = true;
-		this.GetComponent<SpriteRenderer> ().enabled  = true;
+		this.GetComponent<BoxCollider2D> ().enabled  = true;
+		this.GetComponent<SpriteRenderer> ().sprite  = notTaken;
 	}
 }
