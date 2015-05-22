@@ -12,7 +12,7 @@ public class PlayerController : MonoBehaviour {
 	public int joystickNumber;
 	public bool canShoot = true;
 	private bool isDead = false;
-	private float deathDelay = 2.0f;
+	private float deathDelay = 3.0f;
 
 	public Arrow arrow;
 	public Arrow fireball;
@@ -69,8 +69,6 @@ public class PlayerController : MonoBehaviour {
 
 		if (Input.GetButtonDown ("ButtonA_P" + joystickString)) {
 			GameManager.instance.isInstruc = false;
-			Debug.Log ("Instruciton coupé");
-			
 		}
 		if (Input.GetButtonDown ("ButtonStart_P" + joystickString)) {
 			GameManager.instance.isInstruc = !GameManager.instance.isInstruc;

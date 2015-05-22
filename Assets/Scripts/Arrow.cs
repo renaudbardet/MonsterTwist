@@ -27,10 +27,7 @@ public class Arrow : MonoBehaviour {
 
 		if (collision.gameObject.layer != 11) { // Layer 11 = Arrow
 			if (this.explosive){
-				Camera.main.GetComponent<Animator>().Play("ScreenShake");
-				this.GetComponent<Animator>().Play("Explosion");
-
-				Destroy (gameObject);
+				StartCoroutine(RockExplosion());
 			}
 			else{
 				Destroy (gameObject);
@@ -38,4 +35,10 @@ public class Arrow : MonoBehaviour {
 		}
 	}
 
+	IEnumerator RockExplosion(){
+		Camera.main.GetComponent<Animator>().Play("ScreenShake");
+		this.GetComponent<Animator>().Play("Explosion");
+		yield return new WaitForSeconds(0.2f);
+		Destroy (gameObject);
+	}
 }

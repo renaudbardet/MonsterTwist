@@ -38,7 +38,6 @@ public class GameManager : MonoBehaviour {
 			joueur3.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
 			joueur4.GetComponent<Rigidbody2D>().velocity = new Vector3(0,0,0);
 		}
-		
 	}
 
 	public void PlayerHitMonster( PlayerController player ){
@@ -81,7 +80,8 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void MonsterWin(){
-		
+		// Bandeau de victoire
+		// ici
 		monstre.GetComponent<Monstre> ().Respawn();
 
 		joueur1.GetComponent<PlayerMovement> ().controller.StartCoroutine(joueur1.GetComponent<PlayerMovement> ().controller.Respawn());
@@ -94,6 +94,18 @@ public class GameManager : MonoBehaviour {
 		batiment3.GetComponent<Batiment>().Reapparai();
 		batiment4.GetComponent<Batiment>().Reapparai();
 
+		StartCoroutine(DebutPartie ());
+	}
+
+	public IEnumerator DebutPartie(){
+		Debug.Log ("3");
+		yield return new WaitForSeconds(1f);
+		Debug.Log ("2");
+		yield return new WaitForSeconds(1f);
+		Debug.Log ("1");
+		yield return new WaitForSeconds(1f);
+		Debug.Log ("Partez !");
+		
 	}
 
 }
